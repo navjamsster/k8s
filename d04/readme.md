@@ -1,3 +1,6 @@
+kind create cluster --config kind-config.yaml
+
+
 # Option 1 — Direct via mapped host port (if you used kind-config.yaml above)
 curl http://localhost:30080
 
