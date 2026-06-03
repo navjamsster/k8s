@@ -1,0 +1,121 @@
+# pods-not-useful.yaml
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-alpha
+  labels:
+    uses: not-useful
+spec:
+  priorityClassName: critical-priority     # value: 1000000 ← HIGHEST
+  containers:
+  - name: nginx
+    image: nginx
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-beta
+  labels:
+    uses: not-useful
+spec:
+  priorityClassName: high-priority         # value: 750000
+  containers:
+  - name: nginx
+    image: nginx
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-gamma
+  labels:
+    uses: not-useful
+spec:
+  priorityClassName: above-normal-priority # value: 500000
+  containers:
+  - name: nginx
+    image: nginx
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-delta
+  labels:
+    uses: not-useful
+spec:
+  priorityClassName: normal-priority       # value: 300000
+  containers:
+  - name: nginx
+    image: nginx
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-epsilon
+  labels:
+    uses: not-useful
+spec:
+  priorityClassName: below-normal-priority # value: 200000
+  containers:
+  - name: nginx
+    image: nginx
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-zeta
+  labels:
+    uses: not-useful
+spec:
+  priorityClassName: low-priority          # value: 100000
+  containers:
+  - name: nginx
+    image: nginx
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-eta
+  labels:
+    uses: not-useful
+spec:
+  priorityClassName: very-low-priority     # value: 50000
+  containers:
+  - name: nginx
+    image: nginx
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-theta
+  labels:
+    uses: not-useful
+spec:
+  priorityClassName: minimal-priority      # value: 10000
+  containers:
+  - name: nginx
+    image: nginx
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-iota
+  labels:
+    uses: not-useful
+spec:
+  priorityClassName: background-priority   # value: 5000
+  containers:
+  - name: nginx
+    image: nginx
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-kappa
+  labels:
+    uses: not-useful
+spec:
+  priorityClassName: lowest-priority       # value: 1000 ← LOWEST
+  containers:
+  - name: nginx
+    image: nginx

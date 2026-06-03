@@ -1,0 +1,31 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: np-backend
+  namespace: project-snake
+spec:
+  podSelector:
+    matchLabels:
+      app: backend   # applies to backend-* pods
+
+  policyTypes:
+  - Egress            # restrict OUTGOING traffic from backend
+
+  egress:
+  # Rule 1: backend → db1 on port 1111 ✅
+  - to:
+    - podSelector:
+        matchLabels:
+          app: db1
+    ports:
+    - protocol: TCP
+      port: 1111
+
+  # Rule 2: backend → db2 on port 2222 ✅
+  - to:
+    - podSelector:
+        matchLabels:
+          app: db2
+    ports:
+    - protocol: TCP
+      port: 2222

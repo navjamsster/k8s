@@ -1,0 +1,18 @@
+"Explain step-by-step how to create a Kubernetes API Gateway (using Gateway API gateway.networking.k8s.io/v1). Cover: (1) how it handles HTTPS/TLS traffic termination, (2) how to store a TLS certificate in a Kubernetes Secret and reference it in the Gateway, (3) how the TLS handshake authentication flow works end-to-end, (4) the role of HTTPRoute in routing traffic after TLS termination, (5) a complete working YAML example with a TLS Secret + Gateway + HTTPRoute. Include a mental model analogy and the most important kubectl commands to verify everything is working."
+
+Questions:
+1. What are the required API resources to expose HTTPS services using Gateway API?
+2. How do you create a TLS Secret from certificate and key files using kubectl?
+3. How do you reference a TLS Secret inside a Gateway resource spec?
+4. What configuration fields in Gateway control TLS modes (e.g., Terminate vs Passthrough)?
+5. How does the TLS handshake proceed between a client and the Gateway (step-by-step)?
+6. What role does HTTPRoute play after TLS termination on the Gateway?
+7. How do you associate an HTTPRoute with a specific Gateway and hostname?
+8. How can you test TLS termination and validate the presented certificate from a client machine?
+9. Which kubectl get and describe commands are useful to debug Gateway and HTTPRoute issues?
+10. Provide a minimal, complete YAML example including Secret, Gateway, and HTTPRoute for a demo service.
+11. How do you enable SNI-based routing with Gateway API?
+12. What are common errors when a TLS certificate is rejected by the Gateway and how to fix them?
+13. How does mutual TLS differ and what additional configuration is required on Gateway API?
+14. How can you verify that traffic is actually routed to the correct backend pod after TLS termination?
+15. What debugging steps should you follow if the HTTPRoute rules don't match as expected?
