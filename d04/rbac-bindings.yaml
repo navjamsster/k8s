@@ -1,0 +1,44 @@
+# ── BINDING: alice → app1-viewer ───────────────────────────
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: alice-app1-binding
+  namespace: demo
+subjects:
+  - kind: User
+    name: alice               # must match CN in certificate
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: app1-viewer           # must match Role name
+  apiGroup: rbac.authorization.k8s.io
+---
+# ── BINDING: bob → app2-viewer ─────────────────────────────
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: bob-app2-binding
+  namespace: demo
+subjects:
+  - kind: User
+    name: bob
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: app2-viewer
+  apiGroup: rbac.authorization.k8s.io
+---
+# ── BINDING: carol → app3-viewer ───────────────────────────
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: carol-app3-binding
+  namespace: demo
+subjects:
+  - kind: User
+    name: carol
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: app3-viewer
+  apiGroup: rbac.authorization.k8s.io

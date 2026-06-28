@@ -1,0 +1,20 @@
+namespace: demo
+
+apps:
+  - name: appl1
+    image: hashicorp/http-echo
+    args: ["-text=Hello from appl1"]
+    port: 5678
+  - name: appl2
+    image: hashicorp/http-echo
+    args: ["-text=Hello from appl2"]
+    port: 5678
+  - name: appl3
+    image: hashicorp/http-echo
+    args: ["-text=Hello from appl3"]
+    port: 5678
+
+ingress:
+  enabled: true
+  className: nginx
+  host: localhost
