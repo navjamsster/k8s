@@ -1,61 +1,100 @@
+# Backup and Restore
 
-Backup and Restore 
-1. Confirms all pods running — safe to backup
-	k get pods
-	k get all 
+## 1. Confirm cluster state
+Ensure all pods are running before taking a backup.
 
-2. check the url and cert files 
-cat /etc/kubernetes/manifests/etcd.yaml 
+```bash
+k get pods
+k get all
+```
+
+## 2. Check etcd manifest and certs
+Inspect the etcd manifest and confirm the certificate file paths.
+
+```bash
+cat /etc/kubernetes/manifests/etcd.yaml
 cat /etc/kubernetes/manifests/etcd.yaml | grep file
+```
 
-3. create BACKUP
+## 3. Create backup
+Use `etcdctl snapshot save` to create a snapshot.
 
+```bash
 etcdctl snapshot save --help
-etcdctl snapshot save --endpoints=127.0.0.1:2379 --carcert= --cert= --key=   /opt/snapshot-pre-boot.db
-etcdctl snapshot save --endpoints=127.0.0.1:2379 --cacert=/etc/kubernetes/pki/etcd/ca.crt --cert=/etc/kubernetes/pki/etcd/server.crt --key=/etc/kubernetes/pki/etcd/server.key /opt/snapshot-pre-boot.db
+```
 
-4. Restore 
-a> STOP kube-apiserver (prevent writes to etcd during restore) , take a backup 
-	ls /etc/kubernetes/manifests/ 
-	mv /etc/kubernetes/manifests/kube-apiserver.yaml /tmp/kube-apiserver.yaml
-	
-	cat /tmp/kube-apiserver.yaml
-b> Confirm kube-apiserver stopped
-	crictl ps | grep kube-apiserver
-	crictl ps 
+Example command:
 
-c> etcdutl snapshot restore /opt/snapshot-pre-boot.db --data-dir=/var/lib/etcd-backup
-    This creates /var/lib/etcd-backup/member/ on the HOST filesystem
-	Does NOT touch the running etcd yet
+```bash
+etcdctl snapshot save \
+  --endpoints=127.0.0.1:2379 \
+  --cacert=/etc/kubernetes/pki/etcd/ca.crt \
+  --cert=/etc/kubernetes/pki/etcd/server.crt \
+  --key=/etc/kubernetes/pki/etcd/server.key \
+  /opt/snapshot-pre-boot.db
+```
 
-d>  Update etcd.yaml — ONLY change hostPath.path
- 
-  vi /etc/kubernetes/manifests/etcd.yaml 
-	# BEFORE:
-		volumes:
-		  - hostPath:
-			  path: /var/lib/etcd        ← OLD
-			name: etcd-data
+## 4. Restore
 
-		# AFTER:
-		volumes:
-		  - hostPath:
-			  path: /var/lib/etcd-backup ← NEW (matches your --data-dir)
-			name: etcd-data
+### a) Stop kube-apiserver and back up the manifest
+Stop the apiserver to prevent writes to etcd during restore, then move the manifest.
 
-    DO NOT change:
-		--data-dir flag (stays /var/lib/etcd — internal container path)
-		volumeMounts.mountPath (stays /var/lib/etcd — internal container path)
+```bash
+ls /etc/kubernetes/manifests/
+mv /etc/kubernetes/manifests/kube-apiserver.yaml /tmp/kube-apiserver.yaml
+cat /tmp/kube-apiserver.yaml
+```
 
-e. Bring kube-apiserver back
+### b) Confirm kube-apiserver is stopped
 
-	mv  /tmp/kube-apiserver.yaml /etc/kubernetes/manifests/
-	ls /etc/kubernetes/manifests/
+```bash
+crictl ps | grep kube-apiserver
+crictl ps
+```
 
-5. Final verification — cluster healthy with restored data
- Wait and watch apiserver come back (~30-60s)
-	crictl ps -a 
-	crictl ps | grep kube-apiserver
+### c) Restore the snapshot
 
-	k get pods
-	k get all 
+```bash
+etcdctl snapshot restore /opt/snapshot-pre-boot.db --data-dir=/var/lib/etcd-backup
+```
+```
+This creates `/var/lib/etcd-backup/member/` on the host filesystem.
+It does not touch the running etcd process yet.
+
+### d) Update `etcd.yaml`
+Only change `hostPath.path` in `/etc/kubernetes/manifests/etcd.yaml`.
+
+```yaml
+# BEFORE:
+volumes:
+  - hostPath:
+      path: /var/lib/etcd   # OLD
+    name: etcd-data
+
+# AFTER:
+volumes:
+  - hostPath:
+      path: /var/lib/etcd-backup   # NEW (matches --data-dir)
+    name: etcd-data
+```
+
+Important:
+- Do not change the `--data-dir` flag inside the manifest; it stays `/var/lib/etcd` (container internal path).
+- Do not change `volumeMounts.mountPath`; it stays `/var/lib/etcd` (container internal path).
+
+### e) Bring kube-apiserver back
+
+```bash
+mv /tmp/kube-apiserver.yaml /etc/kubernetes/manifests/
+ls /etc/kubernetes/manifests/
+```
+
+## 5. Final verification
+Wait for kube-apiserver to restart (~30-60s), then verify the cluster is healthy.
+
+```bash
+crictl ps -a
+crictl ps | grep kube-apiserver
+k get pods
+k get all
+```
