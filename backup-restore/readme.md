@@ -57,7 +57,7 @@ crictl ps
 ```bash
 etcdctl snapshot restore /opt/snapshot-pre-boot.db --data-dir=/var/lib/etcd-backup
 ```
-```
+
 This creates `/var/lib/etcd-backup/member/` on the host filesystem.
 It does not touch the running etcd process yet.
 
